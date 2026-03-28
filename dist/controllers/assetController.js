@@ -1,7 +1,23 @@
 import { createAsset, deleteAsset, getAllAssets, getAssetById, updateAsset } from "../services/assetService.js";
 import { validateAssetInput } from "../utils/validation.js";
-export const getAssetsHandler = async (_req, res) => {
-    const assets = await getAllAssets();
+export const getAssetsHandler = async (req, res) => {
+    const query = req.query;
+    const city = typeof query.city === "string" ? query.city : undefined;
+    const status = typeof query.status === "string" ? query.status : undefined;
+    const minPrice = typeof query.minPrice === "string" ? Number(query.minPrice) : undefined;
+    const maxPrice = typeof query.maxPrice === "string" ? Number(query.maxPrice) : undefined;
+    const rooms = typeof query.rooms === "string" ? Number(query.rooms) : undefined;
+    const sort = typeof query.sort === "string" ? query.sort : undefined;
+    const order = typeof query.order === "string" ? query.order : undefined;
+    const assets = await getAllAssets({
+        city,
+        status: status,
+        minPrice: Number.isFinite(minPrice) ? minPrice : undefined,
+        maxPrice: Number.isFinite(maxPrice) ? maxPrice : undefined,
+        rooms: Number.isInteger(rooms) ? rooms : undefined,
+        sort: sort,
+        order: order === "desc" ? "desc" : "asc"
+    });
     res.status(200).json(assets);
 };
 export const getAssetByIdHandler = async (req, res) => {

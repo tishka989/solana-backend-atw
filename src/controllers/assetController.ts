@@ -8,8 +8,25 @@ import {
 } from "../services/assetService.js";
 import { validateAssetInput } from "../utils/validation.js";
 
-export const getAssetsHandler = async (_req: Request, res: Response) => {
-  const assets = await getAllAssets();
+export const getAssetsHandler = async (req: Request, res: Response) => {
+  const query = req.query;
+  const city = typeof query.city === "string" ? query.city : undefined;
+  const status = typeof query.status === "string" ? query.status : undefined;
+  const minPrice = typeof query.minPrice === "string" ? Number(query.minPrice) : undefined;
+  const maxPrice = typeof query.maxPrice === "string" ? Number(query.maxPrice) : undefined;
+  const rooms = typeof query.rooms === "string" ? Number(query.rooms) : undefined;
+  const sort = typeof query.sort === "string" ? query.sort : undefined;
+  const order = typeof query.order === "string" ? query.order : undefined;
+
+  const assets = await getAllAssets({
+    city,
+    status: status as any,
+    minPrice: Number.isFinite(minPrice) ? minPrice : undefined,
+    maxPrice: Number.isFinite(maxPrice) ? maxPrice : undefined,
+    rooms: Number.isInteger(rooms) ? rooms : undefined,
+    sort: sort as any,
+    order: order === "desc" ? "desc" : "asc"
+  });
   res.status(200).json(assets);
 };
 
