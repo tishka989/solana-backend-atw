@@ -13,5 +13,6 @@ export interface CreateInvestmentInput {
   walletAddress: string;
   amount: number;
   tokensReceived: number;
-  txHash: string;
+  /** Optional; generated if omitted. */
+  txHash?: string;
 }

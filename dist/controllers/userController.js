@@ -3,7 +3,12 @@ import { validateUserProfileInput } from "../utils/validation.js";
 export const getUserHandler = async (req, res) => {
     const wallet = String(req.params.wallet);
     const user = await getOrCreateUser(wallet);
-    res.status(200).json(user);
+    res.status(200).json({
+        wallet: user.wallet,
+        balance: user.balance,
+        usdt: user.usdt,
+        usds: user.usds
+    });
 };
 export const updateUserHandler = async (req, res) => {
     const wallet = String(req.params.wallet);

@@ -102,16 +102,18 @@ export const validateInvestmentInput = (payload) => {
         throw new AppError("walletAddress must be a valid Solana address format");
     if (!isPositiveNumber(input.amount))
         throw new AppError("amount must be a positive number");
-    if (!isPositiveInteger(input.tokensReceived))
-        throw new AppError("tokensReceived must be a positive integer");
-    if (!isNonEmptyString(input.txHash))
-        throw new AppError("txHash is required");
+    if (!isPositiveNumber(input.tokensReceived))
+        throw new AppError("tokensReceived must be a positive number");
+    if (input.txHash !== undefined &&
+        input.txHash !== null &&
+        !isNonEmptyString(input.txHash))
+        throw new AppError("txHash must be a non-empty string when provided");
     return {
         assetId: input.assetId.trim(),
         walletAddress: input.walletAddress.trim(),
         amount: input.amount,
         tokensReceived: input.tokensReceived,
-        txHash: input.txHash.trim()
+        txHash: isNonEmptyString(input.txHash) ? input.txHash.trim() : undefined
     };
 };
 export const validateUserProfileInput = (payload) => {
@@ -129,6 +131,7 @@ export const validateUserProfileInput = (payload) => {
         email: input.email?.trim()
     };
 };
+const swapStableTokens = ["USDT", "USDS"];
 export const validateSwapInput = (payload) => {
     const input = payload;
     if (!isNonEmptyString(input.wallet))
@@ -145,10 +148,16 @@ export const validateSwapInput = (payload) => {
         throw new AppError("amountOut must be a positive number");
     if (!isNonEmptyString(input.txHash))
         throw new AppError("txHash is required");
+    const fromToken = input.fromToken.trim().toUpperCase();
+    const toToken = input.toToken.trim().toUpperCase();
+    if (!swapStableTokens.includes(fromToken))
+        throw new AppError("fromToken must be USDT or USDS", 400);
+    if (toToken !== "SOL")
+        throw new AppError("toToken must be SOL", 400);
     return {
         wallet: input.wallet.trim(),
-        fromToken: input.fromToken.trim(),
-        toToken: input.toToken.trim(),
+        fromToken,
+        toToken,
         amountIn: input.amountIn,
         amountOut: input.amountOut,
         txHash: input.txHash.trim()

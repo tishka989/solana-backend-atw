@@ -39,12 +39,14 @@ app.get("/docs", (_req, res) => {
             ],
             listings: ["GET /listings", "POST /listings", "DELETE /listings/:id"],
             investments: [
-                "GET /investments?wallet=<address>",
-                "GET /investments?assetId=<id>",
-                "POST /investments"
+                "GET /investments?wallet=<address>&assetId=<id> (portfolio fields)",
+                "POST /investments (debits SOL; txHash optional)"
             ],
             users: ["GET /users/:wallet", "PUT /users/:wallet"],
-            swaps: ["GET /swaps?wallet=<address>", "POST /swaps"],
+            swaps: [
+                "GET /swaps?wallet=<address> (history, USDT|USDS → SOL only on POST)",
+                "POST /swaps"
+            ],
             upload: ["POST /upload"],
             stats: ["GET /stats"]
         },
